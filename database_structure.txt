@@ -2,23 +2,33 @@ Table Structure:
     must be orm based tables
     
     User:
-        -> usernam
-        -> password
-        -> role
-    
-    Tester_report:
-        -> id of report
-        -> summery
-        -> regression
-        -> new
-        -> reopen
-        -> uat
-        -> date or currrent date
+        -> email (VARCHAR)
+        -> password (VARCHAR)
+        -> role (VARCHAR)
+        -> created_at (DATETIME)
 
-    Test_excution_report:
-        -> MODELS_AUTOGEN
-        -> TOTAL_TESTCASE(INT)
-        -> PASS (INT)
-        -> FAIL (INT)
-        -> NO RUN (INT)
+    Tester_report:
+
+        -> report_id (PK, INT)
+        -> user_id (FK, INT) -- Foreign Key to User table
+        -> summary (TEXT)
+        -> regression (BOOLEAN)
+        -> new (BOOLEAN)
+        -> reopen (BOOLEAN)
+        -> uat (BOOLEAN)
+        -> created_at (DATETIME)
+        -> updated_at (DATETIME)   ???????????????????????
+
+
+    Test_execution_report:
+        -> id(INT)
+        -> model_name (VARCHAR)
+        -> report_id (FK, INT) -- Foreign Key to Tester_report table
+        -> total_testcases (INT)
+        -> pass (INT)
+        -> fail (INT)
+        -> no_run (INT)
+        -> execution_time (TIME) -- Optional field for time taken for test execution
+        -> created_at (DATETIME)
+
         
