@@ -1,0 +1,24 @@
+Table Structure:
+    must be orm based tables
+    
+    User:
+        -> usernam
+        -> password
+        -> role
+    
+    Tester_report:
+        -> id of report
+        -> summery
+        -> regression
+        -> new
+        -> reopen
+        -> uat
+        -> date or currrent date
+
+    Test_excution_report:
+        -> MODELS_AUTOGEN
+        -> TOTAL_TESTCASE(INT)
+        -> PASS (INT)
+        -> FAIL (INT)
+        -> NO RUN (INT)
+        
