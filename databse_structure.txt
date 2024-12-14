@@ -1,0 +1,56 @@
+Users:
+
+    -> user_name
+    -> passwoed(hash)
+    -> role(default=TestLead)
+
+Project:
+
+    -> project_name
+
+project_details:
+
+    -> project_name
+    -> RAG - Delivery
+    -> Tester Count
+    -> Billable
+    -> Nonbillable
+    -> Billing Type
+    -> Automation ()
+    -> AI Used
+    -> RAG_details
+
+test_details: 
+
+    -> tester_name:
+    -> billable (bool)
+    -> Project
+
+
+
+Users Table:
+
+    user_name (string):
+    password (string, hashed): 
+    role (string, default="TestLead"):
+
+Project Table:
+
+    project_name (string): 
+
+Project Details Table:
+    project_name (string): 
+    RAG - Delivery (string): 
+    Tester Count (integer):
+    Billable (integer):
+    Nonbillable (integer): 
+    Billing Type (string): 
+    Automation (boolean ): 
+    AI Used (boolean ): 
+    RAG_details (string): Detailed 
+
+Test Details Table:
+
+    tester_name (string):
+    billable (boolean):
+    project (string, reference to project_name):.
