@@ -8,16 +8,17 @@ Project:
 
     -> project_name
 
+
 project_details:
 
     -> project_name
-    -> RAG - Delivery
-    -> Tester Count
-    -> Billable
-    -> Nonbillable
+    -> RAG - Delivery (colour_represending)
+    -> Tester Count(int)
+    -> Billable(int)
+    -> Nonbillable(int)
     -> Billing Type
-    -> Automation ()
-    -> AI Used
+    -> Automation (bool)
+    -> AI Used(bool)
     -> RAG_details
 
 test_details: 
@@ -25,8 +26,6 @@ test_details:
     -> tester_name:
     -> billable (bool)
     -> Project
-
-
 
 Users Table:
 
@@ -49,8 +48,155 @@ Project Details Table:
     AI Used (boolean ): 
     RAG_details (string): Detailed 
 
-Test Details Table:
+tester_details_Table:
 
     tester_name (string):
     billable (boolean):
     project (string, reference to project_name):.
+
+New Defects				:
+    date (select date)
+    Months (month of the date)
+    Regression Defect
+    Functional Defect
+    Defect Reopened
+    UAT Defect
+    project_id
+
+Test Execution Status:
+    Months
+    total tc
+    tc executed
+    passed
+    failed
+    no run
+    blocked
+    date
+    project_id
+
+Total Defect Status:
+    month
+    date
+    project_id
+    Total Defect
+    Defect Closed
+    Open Defect
+    Critical
+    High
+    Medium
+    Low
+
+
+Build Status:
+    month
+    date
+    project_id
+    Total Build Received
+    Build's Accepted
+    Build's Rejected
+
+
+Defect Accepted vs Rejected			
+    month
+    date
+    project_id
+    Total Defects	
+    Dev Team Acceoted	
+    Dev Team Rejected
+
+Test case Creation status		
+    month
+    date
+    project_id
+    Total TC Created	
+    Time spent(hrs)
+
+---------------------------------------------------------------- Database Structire for sample database structure -----------------------------
+1. **Users Table**
+   - user_id (Primary Key, Integer)
+   - user_name (String, Not Null)
+   - password (String, Not Null)
+   - role (String, Default 'TestLead')
+
+2. **Project Table**
+   - project_id (Primary Key, Integer)
+   - project_name (String, Not Null)
+
+3. **Project Details Table**
+   - project_detail_id (Primary Key, Integer)
+   - project_id (Foreign Key, Integer, references Project(project_id))
+   - RAG_delivery (String)
+   - tester_count (Integer)
+   - billable (Integer)
+   - nonbillable (Integer)
+   - billing_type (String)
+   - automation (Boolean)
+   - ai_used (Boolean)
+   - RAG_details (Text)
+
+4. **Tester Details Table**
+   - tester_id (Primary Key, Integer)
+   - tester_name (String, Not Null)
+   - billable (Boolean)
+   - project_id (Foreign Key, Integer, references Project(project_id))
+
+5. **New Defects Table**
+   - defect_id (Primary Key, Integer)
+   - date (Date, Not Null)
+   - months (String, Not Null)
+   - regression_defect (Integer)
+   - functional_defect (Integer)
+   - defect_reopened (Integer)
+   - uat_defect (Integer)
+   - project_id (Foreign Key, Integer, references Project(project_id))
+
+6. **Test Execution Status Table**
+   - execution_status_id (Primary Key, Integer)
+   - months (String, Not Null)
+   - total_tc (Integer)
+   - tc_executed (Integer)
+   - passed (Integer)
+   - failed (Integer)
+   - no_run (Integer)
+   - blocked (Integer)
+   - date (Date, Not Null)
+   - project_id (Foreign Key, Integer, references Project(project_id))
+
+7. **Total Defect Status Table**
+   - defect_status_id (Primary Key, Integer)
+   - month (String, Not Null)
+   - date (Date, Not Null)
+   - project_id (Foreign Key, Integer, references Project(project_id))
+   - total_defect (Integer)
+   - defect_closed (Integer)
+   - open_defect (Integer)
+   - critical (Integer)
+   - high (Integer)
+   - medium (Integer)
+   - low (Integer)
+
+8. **Build Status Table**
+   - build_status_id (Primary Key, Integer)
+   - month (String, Not Null)
+   - date (Date, Not Null)
+   - project_id (Foreign Key, Integer, references Project(project_id))
+   - total_build_received (Integer)
+   - builds_accepted (Integer)
+   - builds_rejected (Integer)
+
+9. **Defect Accepted vs Rejected Table**
+   - defect_status_id (Primary Key, Integer)
+   - month (String, Not Null)
+   - date (Date, Not Null)
+   - project_id (Foreign Key, Integer, references Project(project_id))
+   - total_defects (Integer)
+   - dev_team_accepted (Integer)
+   - dev_team_rejected (Integer)
+
+10. **Test Case Creation Status Table**
+    - creation_status_id (Primary Key, Integer)
+    - month (String, Not Null)
+    - date (Date, Not Null)
+    - project_id (Foreign Key, Integer, references Project(project_id))
+    - total_tc_created (Integer)
+    - time_spent_hours (Integer)
