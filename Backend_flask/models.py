@@ -13,8 +13,8 @@ class Users(db.Model):
 
     def to_dict(self):
         return {
-            'user_id': self.user_id,
-            'username': self.user_name,
+            'user_id': self.id,
+            'username': self.username,
             'password': self.password,
             'role': self.role
         }
@@ -24,11 +24,15 @@ class Project_name(db.Model):
     __tablename__ = 'project_name'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     project_name = db.Column(db.String(100), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    user = db.relationship("Users", backref="Project_name")
+
 
     def to_dict(self):
         return {
             'id': self.id,
-            'project_name': self.project_name
+            'project_name': self.project_name,
+            "user_id": self.user_id
         }
 
 # For project details table
@@ -44,9 +48,11 @@ class Project_details(db.Model):
     automation = db.Column(db.Boolean, nullable=False, default=False)
     ai_used = db.Column(db.Boolean, nullable=False, default=False)
     RAG_details = db.Column(db.String(100), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     
     # Relationship
     project_name = db.relationship("Project_name", backref="project_details")
+    user = db.relationship("Users", backref="project_details")
 
     def to_dict(self):
         return {
@@ -59,17 +65,19 @@ class Project_details(db.Model):
             'billing_type': self.billing_type,
             'automation': self.automation,
             'ai_used': self.ai_used,
-            'RAG_details': self.RAG_details
+            'RAG_details': self.RAG_details,
+            "user_id": self.user_id
         }
 
 # For testers table
 class Testers(db.Model):
     __tablename__ = 'testers'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    tester_name = db.Column(db.String(100), nullable=False)
+    tester_name = db.Column(db.String(100), nullable=False, unique=False)
     billable = db.Column(db.Boolean, nullable=False)
     project_name_id = db.Column(db.Integer, db.ForeignKey("project_name.id"), nullable=False)
-
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    user = db.relationship("Users", backref="Testers")
     # Relationship
     project_name = db.relationship("Project_name", backref="testers")
 
@@ -78,7 +86,8 @@ class Testers(db.Model):
             'id': self.id,
             'tester_name': self.tester_name,
             'billable': self.billable,
-            'project_name_id': self.project_name_id
+            'project_name_id': self.project_name_id,
+            "user_id": self.user_id
         }
 
 # For new defects table
@@ -92,6 +101,8 @@ class New_defects(db.Model):
     defect_reopened = db.Column(db.Integer, nullable=False)
     uat_defect = db.Column(db.Integer, nullable=False)
     project_name_id = db.Column(db.Integer, db.ForeignKey("project_name.id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    user = db.relationship("Users", backref="New_defects")
 
     # Relationship
     project_name = db.relationship("Project_name", backref="new_defects")
@@ -105,7 +116,8 @@ class New_defects(db.Model):
             'functional_defect': self.functional_defect,
             'defect_reopened': self.defect_reopened,
             'uat_defect': self.uat_defect,
-            'project_name_id': self.project_name_id
+            'project_name_id': self.project_name_id,
+            "user_id": self.user_id
         }
 
 # For test execution status table
@@ -121,6 +133,8 @@ class Test_execution_status(db.Model):
     no_run = db.Column(db.Integer, nullable=False)
     blocked = db.Column(db.Integer, nullable=False)
     project_name_id = db.Column(db.Integer, db.ForeignKey("project_name.id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    user = db.relationship("Users", backref="Test_execution_status")
 
     # Relationship
     project_name = db.relationship("Project_name", backref="test_execution_status")
@@ -136,7 +150,8 @@ class Test_execution_status(db.Model):
             'project_name_id': self.project_name_id,
             'date': self.date,
             'total_execution': self.total_execution,
-            'tc_execution': self.tc_execution
+            'tc_execution': self.tc_execution,
+            "user_id": self.user_id
         }
 
 # For total defect status table
@@ -153,6 +168,8 @@ class Total_Defect_Status(db.Model):
     medium = db.Column(db.Integer, nullable=False)
     low = db.Column(db.Integer, nullable=False)
     project_name_id = db.Column(db.Integer, db.ForeignKey("project_name.id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    user = db.relationship("Users", backref="Total_Defect_Status")
 
     # Relationship
     project_name = db.relationship("Project_name", backref="total_defect_status")
@@ -169,7 +186,8 @@ class Total_Defect_Status(db.Model):
             'high': self.high,
             'medium': self.medium,
             'low': self.low,
-            'project_name_id': self.project_name_id
+            'project_name_id': self.project_name_id,
+            "user_id": self.user_id
         }
 
 # Build status table
@@ -182,6 +200,9 @@ class BuildStatus(db.Model):
     builds_accepted = db.Column(db.Integer, nullable=False)
     builds_rejected = db.Column(db.Integer, nullable=False)
     project_name_id = db.Column(db.Integer, db.ForeignKey("project_name.id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    user = db.relationship("Users", backref="BuildStatus")
+
 
     # Relationship with the Project_name table
     project = db.relationship('Project_name', backref='build_status')
@@ -194,7 +215,8 @@ class BuildStatus(db.Model):
             'total_build_received': self.total_build_received,
             'builds_accepted': self.builds_accepted,
             'builds_rejected': self.builds_rejected,
-            'project_name_id': self.project_name_id
+            'project_name_id': self.project_name_id,
+            "user_id": self.user_id
         }
 
 # Defect accepted vs rejected table
@@ -207,6 +229,8 @@ class DefectAcceptedRejected(db.Model):
     dev_team_accepted = db.Column(db.Integer, nullable=False)
     dev_team_rejected = db.Column(db.Integer, nullable=False)
     project_name_id = db.Column(db.Integer, db.ForeignKey("project_name.id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    user = db.relationship("Users", backref="DefectAcceptedRejected")
 
     # Relationship with the Project_name table
     project = db.relationship('Project_name', backref='defect_accepted_rejected')
@@ -219,7 +243,8 @@ class DefectAcceptedRejected(db.Model):
             'total_defects': self.total_defects,
             'dev_team_accepted': self.dev_team_accepted,
             'dev_team_rejected': self.dev_team_rejected,
-            'project_name_id': self.project_name_id
+            'project_name_id': self.project_name_id,
+            "user_id": self.user_id
         }
 
 # Test case creation status table
@@ -232,6 +257,8 @@ class TestCaseCreationStatus(db.Model):
     test_case_approved = db.Column(db.Integer, nullable=False)
     test_case_rejected = db.Column(db.Integer, nullable=False)
     project_name_id = db.Column(db.Integer, db.ForeignKey("project_name.id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    user = db.relationship("Users", backref="TestCaseCreationStatus")
 
     # Relationship with the Project_name table
     project = db.relationship('Project_name', backref='test_case_creation_status')
@@ -244,5 +271,6 @@ class TestCaseCreationStatus(db.Model):
             'total_test_case_created': self.total_test_case_created,
             'test_case_approved': self.test_case_approved,
             'test_case_rejected': self.test_case_rejected,
-            'project_name_id': self.project_name_id
+            'project_name_id': self.project_name_id,
+            "user_id": self.user_id
         }

@@ -7,7 +7,7 @@ import os
 
 
 def register_router(app):
-
+    # ------------------------for login and register the users --------------------------------
     #to register the users
     @app.route('/register', methods=['POST'])
     def register_user():
@@ -58,3 +58,37 @@ def register_router(app):
                 'userId': user.id,
             }
         }), 200
+    
+    # -------------------------------end of login and register the user ----------------------------
+
+
+
+    @app.route("/create-project", methods=["GET", "POST"])
+    @jwt_required()
+    def create_project():
+        if request.method == "POST":
+            user_id = get_jwt_identity()
+            
+            # Debugging: Print the received JSON
+            data = request.json
+            print("Received data:", data)  # This will help debug if the request is missing the project_name
+            
+            if "project_name" not in data:
+                return jsonify({"error": "Project name is required"}), 400
+            
+            project_name = data.get("project_name")
+            project = Project_name(project_name=project_name, user_id=user_id)
+            
+            try:
+                db.session.add(project)
+                db.session.commit()
+                return jsonify({"message": "Project created successfully", "user_id": user_id}), 201
+            except Exception as e:
+                db.session.rollback()
+                return jsonify({"error": str(e)}), 500
+        
+        elif request.method == "GET":
+            projects = Project_name.query.all()
+            return jsonify({"projects": [project.to_dict() for project in projects]}), 200
+                
+        
