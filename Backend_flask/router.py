@@ -1,7 +1,7 @@
 from flask import jsonify, request
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import db,Users,Project_name,Project_details,New_defects,Total_Defect_Status,Test_execution_status,Testers,TestCaseCreationStatus,DefectAcceptedRejected,BuildStatus
-from flask_jwt_extended import create_access_token,jwt_required,get_jwt_identity
+from flask_jwt_extended import create_access_token,jwt_required,get_jwt_identity,verify_jwt_in_request
 import os
 
 
@@ -45,10 +45,12 @@ def register_router(app):
             return jsonify({'error': 'Username and password required'}), 400
         
         user = Users.query.filter_by(username=data['username']).first()
+        print(user)
+        print(user.id)
         if not user or not check_password_hash(user.password, data['password']):
             return jsonify({'error': 'Invalid credentials'}), 401
         
-        access_token = create_access_token(identity=user.id)
+        access_token = create_access_token(identity=str(user.id))
         
         return jsonify({
             'message': 'Login successful',
@@ -62,16 +64,17 @@ def register_router(app):
     # -------------------------------end of login and register the user ----------------------------
 
 
-
+    # 
+    # @verify_jwt_in_request()
     @app.route("/create-project", methods=["GET", "POST"])
-    @jwt_required()
+    @jwt_required() 
     def create_project():
+        user_id = get_jwt_identity()
+        print("JWT user_id:", user_id)  # Debugging: check the JWT identity
+        
         if request.method == "POST":
-            user_id = get_jwt_identity()
-            
-            # Debugging: Print the received JSON
             data = request.json
-            print("Received data:", data)  # This will help debug if the request is missing the project_name
+            print("Received data:", data)  # Print the incoming request data
             
             if "project_name" not in data:
                 return jsonify({"error": "Project name is required"}), 400

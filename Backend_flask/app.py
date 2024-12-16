@@ -1,13 +1,14 @@
 from flask import Flask
 from flask_cors import CORS
 from flask_migrate import Migrate
-from flask_jwt_extended import JWTManager,jwt_manager,get_jwt_identity
+from flask_jwt_extended import JWTManager
 from dotenv import load_dotenv
 import os
-from models import db,Users,Project_name,Project_details,New_defects,Total_Defect_Status,Test_execution_status,Testers,TestCaseCreationStatus,DefectAcceptedRejected,BuildStatus
+from models import db
 
 from router import register_router
-
+import secrets
+import datetime
 
 #to load the env file
 load_dotenv()
@@ -25,10 +26,12 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = os.getenv("SECRET_KEY")  # Required for forms (CSRF protection)
 
 #for get the jwd tokens
-app.config['JWT_SECRET_KEY'] = os.getenv("JWT_SECRET_KEY")
+app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', secrets.token_hex(32))  # Secure secret key
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(hours=1)  # Access token expiration time (1 hour)
 
-#for jwt tokens
+# Initialize JWTManager with the app
 jwt = JWTManager(app)
+
 db.init_app(app)
 migrate = Migrate(app, db)
 
