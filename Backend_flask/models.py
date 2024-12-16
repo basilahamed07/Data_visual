@@ -1,6 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timezone
-
+from sqlalchemy.dialects.postgresql import ARRAY
 db = SQLAlchemy()
 
 # For user table
@@ -42,8 +42,10 @@ class Project_details(db.Model):
     project_name_id = db.Column(db.Integer, db.ForeignKey("project_name.id"), nullable=False)
     RAG = db.Column(db.String(100), nullable=False)
     tester_count = db.Column(db.Integer, nullable=False)
-    billable = db.Column(db.Integer, nullable=False)
-    nonbillable = db.Column(db.Integer, nullable=False)
+    billable = db.Column(ARRAY(db.Integer), nullable=False)
+    nonbillable = db.Column(ARRAY(db.Integer), nullable=False)
+    # billable = db.Column(db.JSON, nullable=True)
+    # nonbillable = db.Column(db.JSON, nullable=True)
     billing_type = db.Column(db.String(100), nullable=False)
     automation = db.Column(db.Boolean, nullable=False, default=False)
     ai_used = db.Column(db.Boolean, nullable=False, default=False)
@@ -74,13 +76,23 @@ class Testers(db.Model):
     __tablename__ = 'testers'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     tester_name = db.Column(db.String(100), nullable=False, unique=False)
-    billable = db.Column(db.Boolean, nullable=False)
-    project_name_id = db.Column(db.Integer, db.ForeignKey("project_name.id"), nullable=False)
+    billable = db.Column(db.Boolean, nullable=True, default=False)
+    project_name_id = db.Column(ARRAY(db.Integer, db.ForeignKey("project_name.id")), nullable=True)
+    # project_name_id = db.Column(ARRAY(db.Integer, db.ForeignKey("project_name.id")), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    user = db.relationship("Users", backref="Testers")
-    # Relationship
-    project_name = db.relationship("Project_name", backref="testers")
+    
+    user = db.relationship("Users", backref="testers")
+    # Relationship with Project_name
+    # project_name = db.relationship("Project_name", backref="testers")
 
+    def __init__(self, tester_name, user_id, project_name_ids=None, billable=False):
+        if project_name_ids is None:
+            project_name_ids = []  # Default to an empty list
+        self.tester_name = tester_name
+        self.user_id = user_id
+        self.billable = billable
+        self.project_name_id = project_name_ids
+        
     def to_dict(self):
         return {
             'id': self.id,
@@ -89,6 +101,7 @@ class Testers(db.Model):
             'project_name_id': self.project_name_id,
             "user_id": self.user_id
         }
+    
 
 # For new defects table
 class New_defects(db.Model):

@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 import os
 from models import db
 
-from router import register_router
+from main_routing import all_router
 import secrets
 import datetime
 
@@ -40,7 +40,7 @@ CORS(app)
 
 #for regiser the router in app
 
-register_router(app)
+all_router(app)
 
 #for api routing by using the register routing
 
@@ -48,4 +48,4 @@ with app.app_context():
     db.create_all()
 
 if __name__=="__main__":
-    app.run(debug=True)
+    app.run(debug=True,host="0.0.0.0",port=5000)
